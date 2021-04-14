@@ -1,16 +1,19 @@
-const navigation = document.querySelector('nav'); // on va sélectionner l'élément nav pour pouvoir lui ajouter les éléments
-const sectionNames = document.querySelectorAll('[data-section]'); // cherche tous les sélecteurs 'data-section'
+ // select the nav element to add the elements titles/links
+const navigation = document.querySelector('nav');
+
+// select all section with [data-section]
+const sectionNames = document.querySelectorAll('[data-section]');
 const menuList = document.createElement('ul');
 
 
-// // ratio qui doit être visible par l'observeur
+// ratio for the observer
 const ratio = 0.6;
 
-// recherche tous les éléments avec la classe section
+// selet all elements with the class '.section-class'
 const spies = document.querySelectorAll('.section-class');
 
 
-// définition de la variable observeur, qui prendre la valeur de la partie de l'écran à observer
+// variable observer : will take the value of the part of the screen to observe
 let observer = null;
 
 
@@ -19,27 +22,27 @@ let observer = null;
 function createNavigation() {
   for(let i = 0; i < sectionNames.length; i++){
 
-      // on ajoute le nom de l'id à la section sectionx
+      // add the id name to the section
       sectionNames[i].id = `section${i+1}`;
 
-      // Création d'une nouvelle puce de liste
+      // create the new li element
       const newItemList = document.createElement('li');
 
-      // Création d'un textNode avec le nom de la section pour le placer dans li
+      // textNode creation with the name of the section contained in [data-section] to add to the li element
       const sectionName = document.createTextNode(sectionNames[i].dataset.section);
 
-      // Création d'un élément link
+      // create link element
       const link = document.createElement('a');
-       //on attache le textNode au lien
+       // append the name of the section to the link
       link.appendChild(sectionName);
-       //on donne le textNode comme titre du lien
+       // append the name of the section to the title of the link
       link.title = sectionName.textContent;
-       //on donne le nom du lien vers lequel il doit pointer
+       // add the href link with the section to point
       link.href = "#section"+(i+1);
 
-      newItemList.appendChild(link); // On attache le lien avec le texte à li
-      menuList.appendChild(newItemList); // On attache li au menu
-      navigation.appendChild(menuList); // On attache li dans le nav
+      newItemList.appendChild(link); // append link to li
+      menuList.appendChild(newItemList); // append li to the menu
+      navigation.appendChild(menuList); // append menu to nav
   }
 }
 
@@ -47,48 +50,49 @@ createNavigation();
 
 
 
-// SECTION ACTIVE
+// ACTIVE SECTION
 
-// fonction qui va mettre la classe active à l'élément observé
-const activate = function(elem) {
-  //Retourne l'id de l'élément activé
+// fonction that will add the active class to the observed section
+  const activate = function(elem) {
+  // get the id of the element
   const id = elem.getAttribute('id');
 
 
-  // Activation classe de la section active
-  // Recherche toutes les sections qui ont la classe active-section
+  // first we need to remove all active classes from the sections to be sure that 2 sections will not be active
+  // get all elements with the class active-section
   const activeSections = document.getElementsByClassName('active-section');
-  // Va supprimer la classe active-section de toutes les sections
+  // delete the class active-section from all sections
   for (var i = 0; i < activeSections.length; i++) {
     activeSections[i].classList.remove('active-section')
   }
 
-  // retourne la section visible
+  // get the id from the visible section
   const activeSection = document.getElementById(`${id}`);
-  // ajoute la classe active-section
+  // add the active-section class to the section
   activeSection.classList.add('active-section');
 
 
-  // Activation classe du lien de la section active
+  // get the link from the active section
   const anchor = document.querySelector(`a[href="#${id}"]`)
-  //ajoute la classe active a l'élément observé
 
+  // if no link is active, return null
   if (anchor === null) {
     return null
   }
 
-  // prend l'élément parent du lien pour y séléctionner tous les éléments qui ont une classe active
+  // get the parent element from the link to remove the active class from all links and add the new active link
+
   const activeNav = document.querySelector('.navbar__menu');
   const activeLinks = activeNav.querySelectorAll('.active');
-  //va enlever la classe active de chaque élément/node
+  // remove the active class from every link
   activeLinks.forEach(node => node.classList.remove('active'));
-  //ajoute la classe active a l'élément observé
+  // add the active class to the link
   anchor.classList.add('active');
 
 };
 
 
-// entries sont les éléments qui entrent et sortent de la zone d'affichage
+// entries are the elements in the visible viewport
 const callback = function(entries) {
   entries.forEach(function(entry) {
     if (entry.isIntersecting) {
@@ -98,34 +102,35 @@ const callback = function(entries) {
 };
 
 
-// Fonction pour quand on redimensionne la fenêtre
+// function to reinitialise the observer when we resize the window
 const observe = function(elems) {
   if(observer !== null){
-    // on va enlever l'observeur
+    // remove the observer
     elems.forEach(elem => observer.unobserve(elem));
   }
-
-  // bottom margin observeur
+console.log(spies);
+  // bottom margin observer
   const bottom = (window.innerHeight * ratio);
 
-  // top margin observeur
+  // top margin observer
   const top = (window.innerHeight - bottom - 1);
 
+  // set the IntersectionObserver
   observer = new IntersectionObserver(callback, {rootMargin: `-${top}px 0px -${bottom}px 0px`});
 
   spies.forEach(elem => observer.observe(elem));
 }
 
 
-// LOGIQUE
+// LOGIC
 
-// on va vérifier qu'il y a bien des éléments à espionner, sinon pas la peine de créer d'observeur
+// we will check if there are elements to spy (section with the class section-class)
 
 if (spies.length > 0) {
-  // appel à la fonction observe
+  // call the observe function
   observe(spies);
 
-  // vérifie si il y a une redimension, et si oui, appel à la fonction observe
+  // check if the window has been resized, if so, call the resize function
   window.addEventListener('resize', function() {
       observe(spies);
     })
