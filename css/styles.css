@@ -212,7 +212,6 @@ a{
 /* SECTION */
 section {
     min-height: 100vh;
-    /* padding-top: 25vh; */
     padding-bottom: 50px;
     display: flex;
     align-items: center;
@@ -293,11 +292,11 @@ section {
 }
 
 section:nth-of-type(even).active-section .slide {
-    background: rgb(245, 239, 224, 0.2);
+    background: rgba(245, 239, 224, 0.1);
 }
 
 section:nth-of-type(odd).active-section .slide {
-    background: rgb(153, 70, 54, 0.1);
+    background: rgba(153, 70, 54, 0.1);
 }
 
 section:nth-of-type(even){
@@ -376,11 +375,6 @@ section:nth-of-type(even){
     text-transform: uppercase;
     /* padding: 5px 0; */
   }
-
-  section {
-      /* padding-top: 35vh; */
-  }
-
 
   .img-hero img{
     width: 100%;
