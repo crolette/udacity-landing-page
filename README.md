@@ -10,3 +10,4 @@ Javascript:
 - intersectionObserver
 - add/remove class
 - createElement
+- scrollIntoView
