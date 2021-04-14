@@ -18,33 +18,32 @@ let observer = null;
 
 
 // CREATION MENU
-
 function createNavigation() {
-  for(let i = 0; i < sectionNames.length; i++){
+  sectionNames.forEach((sectionNames, i) => {
+  // for(let i = 0; i < sectionNames.length; i++){
 
-      // add the id name to the section
-      sectionNames[i].id = `section${i+1}`;
+  // add the id name to the section
+  sectionNames.id = `section${i+1}`;
+  // create the new li element
+  const newItemList = document.createElement('li');
 
-      // create the new li element
-      const newItemList = document.createElement('li');
+  // textNode creation with the name of the section contained in [data-section] to add to the li element
+  const sectionName = document.createTextNode(sectionNames.dataset.section);
 
-      // textNode creation with the name of the section contained in [data-section] to add to the li element
-      const sectionName = document.createTextNode(sectionNames[i].dataset.section);
+  // create link element
+  const link = document.createElement('a');
+ // append the name of the section to the link
+  link.appendChild(sectionName);
+ // append the name of the section to the title of the link
+  link.title = sectionName.textContent;
 
-      // create link element
-      const link = document.createElement('a');
-       // append the name of the section to the link
-      link.appendChild(sectionName);
-       // append the name of the section to the title of the link
-      link.title = sectionName.textContent;
-       // add the href link with the section to point
-      link.href = "#section"+(i+1);
+  newItemList.appendChild(link); // append link to li
+  menuList.appendChild(newItemList); // append li to the menu
+  navigation.appendChild(menuList); // append menu to nav
 
-      newItemList.appendChild(link); // append link to li
-      menuList.appendChild(newItemList); // append li to the menu
-      navigation.appendChild(menuList); // append menu to nav
   }
-}
+)};
+
 
 createNavigation();
 
@@ -52,11 +51,10 @@ createNavigation();
 
 // ACTIVE SECTION
 
-// fonction that will add the active class to the observed section
-  const activate = function(elem) {
-  // get the id of the element
-  const id = elem.getAttribute('id');
-
+// function that will add the active class to the observed section
+const activate = function(elem) {
+  // get the data-section name of the element
+  const id = elem.dataset.section;
 
   // first we need to remove all active classes from the sections to be sure that 2 sections will not be active
   // get all elements with the class active-section
@@ -66,14 +64,14 @@ createNavigation();
     activeSections[i].classList.remove('active-section')
   }
 
-  // get the id from the visible section
-  const activeSection = document.getElementById(`${id}`);
+  // select the visible section
+  const activeSection = document.querySelector(`[data-section=${id}]`);
   // add the active-section class to the section
   activeSection.classList.add('active-section');
 
 
   // get the link from the active section
-  const anchor = document.querySelector(`a[href="#${id}"]`)
+  const anchor = document.querySelector(`a[title="${id}"]`)
 
   // if no link is active, return null
   if (anchor === null) {
@@ -81,7 +79,6 @@ createNavigation();
   }
 
   // get the parent element from the link to remove the active class from all links and add the new active link
-
   const activeNav = document.querySelector('.navbar__menu');
   const activeLinks = activeNav.querySelectorAll('.active');
   // remove the active class from every link
@@ -97,6 +94,7 @@ const callback = function(entries) {
   entries.forEach(function(entry) {
     if (entry.isIntersecting) {
       activate(entry.target);
+
     }
   })
 };
@@ -108,7 +106,7 @@ const observe = function(elems) {
     // remove the observer
     elems.forEach(elem => observer.unobserve(elem));
   }
-console.log(spies);
+
   // bottom margin observer
   const bottom = (window.innerHeight * ratio);
 
@@ -156,4 +154,15 @@ function scrollFunction() {
 function topFunction() {
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+}
+
+
+// SCROLL TO SECTION
+var links = document.querySelector('.navbar__menu').getElementsByTagName('a');
+
+for (let link of links){
+  link.addEventListener('click', function() {
+    const clickedLink = document.querySelector(`[data-section="${this.title}"]`);
+    clickedLink.scrollIntoView();
+  });
 }
